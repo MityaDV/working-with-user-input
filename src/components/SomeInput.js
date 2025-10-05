@@ -6,6 +6,7 @@ const SomeInput = (props) => {
 
   // 1 подход
   const [enteredName, setEnteredName] = useState('');
+  const [isEnteredNameValid, setIsEnteredNameValid] = useState(true);
 
   const nameInputChangeHandler = (e) => {
     setEnteredName(e.target.value);
@@ -14,14 +15,25 @@ const SomeInput = (props) => {
   const formSubmitHandler = (e) => {
     e.preventDefault();
 
+    if (enteredName.trim() === '') {
+      setIsEnteredNameValid(false);
+      return;
+    }
+
+    setIsEnteredNameValid(true);
+
     console.log(enteredName);
     console.log(nameInputRef.current.value);
     setEnteredName('');
   };
 
+  const nameInputClasses = isEnteredNameValid
+    ? 'form-control'
+    : 'form-control invalid';
+
   return (
     <form onSubmit={formSubmitHandler}>
-      <div className="form-control">
+      <div className={nameInputClasses}>
         <label htmlFor="name">Введите Имя</label>
         <input
           ref={nameInputRef}
@@ -30,6 +42,7 @@ const SomeInput = (props) => {
           value={enteredName}
           onChange={nameInputChangeHandler}
         />
+        {!isEnteredNameValid && <p className="error-text">Введите имя</p>}
       </div>
       <div className="form-actions">
         <button>Отправить</button>
