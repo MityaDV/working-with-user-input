@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SomeInput = (props) => {
   // 2 подход
@@ -6,14 +6,32 @@ const SomeInput = (props) => {
 
   // 1 подход
   const [enteredName, setEnteredName] = useState('');
-  const [isEnteredNameValid, setIsEnteredNameValid] = useState(true);
+  const [isEnteredNameValid, setIsEnteredNameValid] = useState(false);
+  const [wasNameInputTouched, setWasNameInputTouched] = useState(false);
+
+  useEffect(() => {
+    if (isEnteredNameValid) {
+      console.log('Данные валидны');
+    }
+  }, [isEnteredNameValid]);
 
   const nameInputChangeHandler = (e) => {
     setEnteredName(e.target.value);
   };
 
+  const nameInputLostFocusHandler = (e) => {
+    setWasNameInputTouched(true);
+
+    if (enteredName.trim() === '') {
+      setIsEnteredNameValid(false);
+      return;
+    }
+  };
+
   const formSubmitHandler = (e) => {
     e.preventDefault();
+
+    setWasNameInputTouched(true);
 
     if (enteredName.trim() === '') {
       setIsEnteredNameValid(false);
@@ -27,9 +45,11 @@ const SomeInput = (props) => {
     setEnteredName('');
   };
 
-  const nameInputClasses = isEnteredNameValid
-    ? 'form-control'
-    : 'form-control invalid';
+  const isNameInputInvalid = !isEnteredNameValid && wasNameInputTouched;
+
+  const nameInputClasses = isNameInputInvalid
+    ? 'form-control invalid'
+    : 'form-control';
 
   return (
     <form onSubmit={formSubmitHandler}>
@@ -41,8 +61,9 @@ const SomeInput = (props) => {
           id="name"
           value={enteredName}
           onChange={nameInputChangeHandler}
+          onBlur={nameInputLostFocusHandler}
         />
-        {!isEnteredNameValid && <p className="error-text">Введите имя</p>}
+        {isNameInputInvalid && <p className="error-text">Обязательное поле</p>}
       </div>
       <div className="form-actions">
         <button>Отправить</button>
