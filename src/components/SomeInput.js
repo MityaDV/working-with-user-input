@@ -1,12 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const SomeInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
-  // const [isEnteredNameValid, setIsEnteredNameValid] = useState(false);
   const [wasNameInputTouched, setWasNameInputTouched] = useState(false);
+  // const [isFormValid, setIsFormValid] = useState(false);
 
   const isEnteredNameValid = enteredName.trim() !== '';
   const isNameInputInvalid = !isEnteredNameValid && wasNameInputTouched;
+
+  // useEffect(() => {
+  //   if (isEnteredNameValid) {
+  //     setIsFormValid(true);
+  //   } else {
+  //     setIsFormValid(false);
+  //   }
+  // }, [isEnteredNameValid]);
+
+  // OR
+
+  let isFormValid = false;
+
+  if (isEnteredNameValid) {
+    isFormValid = true;
+  }
 
   const nameInputChangeHandler = (e) => {
     setEnteredName(e.target.value);
@@ -48,7 +64,7 @@ const SomeInput = (props) => {
         {isNameInputInvalid && <p className="error-text">Обязательное поле</p>}
       </div>
       <div className="form-actions">
-        <button>Отправить</button>
+        <button disabled={!isFormValid}>Отправить</button>
       </div>
     </form>
   );
