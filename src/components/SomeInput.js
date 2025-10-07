@@ -5,8 +5,14 @@ const SomeInput = (props) => {
   const [wasNameInputTouched, setWasNameInputTouched] = useState(false);
   // const [isFormValid, setIsFormValid] = useState(false);
 
+  const [enteredEmail, setEnteredEmail] = useState('');
+  const [wasEmailInputTouched, setWasEmailInputTouched] = useState(false);
+
   const isEnteredNameValid = enteredName.trim() !== '';
   const isNameInputInvalid = !isEnteredNameValid && wasNameInputTouched;
+
+  const isEnteredEmailValid = enteredEmail.includes('@');
+  const isEmailInputInvalid = !isEnteredEmailValid && wasEmailInputTouched;
 
   // useEffect(() => {
   //   if (isEnteredNameValid) {
@@ -20,7 +26,7 @@ const SomeInput = (props) => {
 
   let isFormValid = false;
 
-  if (isEnteredNameValid) {
+  if (isEnteredNameValid && isEnteredEmailValid) {
     isFormValid = true;
   }
 
@@ -30,6 +36,14 @@ const SomeInput = (props) => {
 
   const nameInputLostFocusHandler = (e) => {
     setWasNameInputTouched(true);
+  };
+
+  const emailInputChangeHandler = (e) => {
+    setEnteredEmail(e.target.value);
+  };
+
+  const emailInputLostFocusHandler = (e) => {
+    setWasEmailInputTouched(true);
   };
 
   const formSubmitHandler = (e) => {
@@ -42,11 +56,20 @@ const SomeInput = (props) => {
     }
 
     console.log(enteredName);
+    console.log(enteredEmail);
+
     setEnteredName('');
     setWasNameInputTouched(false);
+
+    setEnteredEmail('');
+    setWasEmailInputTouched(false);
   };
 
   const nameInputClasses = isNameInputInvalid
+    ? 'form-control invalid'
+    : 'form-control';
+
+  const emailInputClasses = isEmailInputInvalid
     ? 'form-control invalid'
     : 'form-control';
 
@@ -62,6 +85,17 @@ const SomeInput = (props) => {
           onBlur={nameInputLostFocusHandler}
         />
         {isNameInputInvalid && <p className="error-text">Обязательное поле</p>}
+      </div>
+      <div className={emailInputClasses}>
+        <label htmlFor="email">Введите email</label>
+        <input
+          type="email"
+          id="email"
+          value={enteredEmail}
+          onChange={emailInputChangeHandler}
+          onBlur={emailInputLostFocusHandler}
+        />
+        {isEmailInputInvalid && <p className="error-text">Обязательное поле</p>}
       </div>
       <div className="form-actions">
         <button disabled={!isFormValid}>Отправить</button>
